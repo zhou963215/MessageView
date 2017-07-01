@@ -62,6 +62,8 @@
 }
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
     
+//    CGPoint point = [[touches anyObject] locationInView:self.view];
+
     [messageView endEdit];
     
 //    [self.view endEditing:YES];

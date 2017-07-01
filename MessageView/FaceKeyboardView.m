@@ -206,7 +206,7 @@
 
 - (UIView *)bottomView{
     if (!_bottomView) {
-        _bottomView = [[UIView alloc] initWithFrame:CGRectMake(0, self.frame.size.height - 40, self.frame.size.width, 40)];
+        _bottomView = [[UIView alloc] initWithFrame:CGRectMake(0, self.frame.size.height - 40, self.frame.size.width, 40)];       
         _bottomView.backgroundColor = [UIColor whiteColor];
         
         UIButton *sendButton = [[UIButton alloc] initWithFrame:CGRectMake(self.frame.size.width - 70, 0, 70, 40)];
@@ -239,6 +239,8 @@
     }
     return _bottomView;
 }
+
+
 //发送
 - (void)sendAction:(UIButton *)sender{
     sender.backgroundColor =[UIColor colorWithRed:0/255.0f green:122/255.0f blue:255.0/255.0f alpha:1.0];

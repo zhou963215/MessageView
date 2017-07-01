@@ -108,6 +108,7 @@
         self.TextViewInput.layer.cornerRadius = 4;
         self.TextViewInput.layer.masksToBounds = YES;
         self.TextViewInput.delegate = self;
+        self.TextViewInput.font = [UIFont systemFontOfSize:15];
         self.TextViewInput.layer.borderWidth = 1;
         self.TextViewInput.layer.borderColor = [[[UIColor lightGrayColor] colorWithAlphaComponent:0.4] CGColor];
         [self addSubview:self.TextViewInput];
@@ -119,7 +120,7 @@
         [self.faceViewBtn addTarget:self action:@selector(faceClick:) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:self.faceViewBtn];
         //输入框的提示语
-        placeHold = [[UILabel alloc]initWithFrame:CGRectMake(20, 0, 200, 30)];
+        placeHold = [[UILabel alloc]initWithFrame:CGRectMake(20, 2, 200, 30)];
         placeHold.text = @" 说点什么吧 ";
         placeHold.textColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.8];
         [self.TextViewInput addSubview:placeHold];
