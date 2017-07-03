@@ -12,14 +12,16 @@
 
 @protocol MessageViewDelegate <NSObject>
 
-// text
+// 文字
 - (void)MessageView:(MessageView *)funcView sendMessage:(NSString *)message;
 
-// image
+// 图片
 - (void)MessageView:(MessageView *)funcView sendPicture:(UIImage *)image;
 
-// audio
+// 音频
 - (void)MessageView:(MessageView *)funcView sendVoice:(NSData *)voice time:(NSInteger)second;
+//表情视图变更约束
+- (void)faceViewChange:(MessageView *)funcView;
 
 @end
 

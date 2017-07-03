@@ -61,12 +61,11 @@
     
     self.superVC = superVC;
     CGRect frame = CGRectMake(0, Main_Screen_Height-40, Main_Screen_Width, 40);
-    
     self = [super initWithFrame:frame];
 
     if (self) {
         
-        
+        self.backgroundColor = [UIColor whiteColor];
         //发送消息
         self.btnSendMessage = [UIButton buttonWithType:UIButtonTypeCustom];
         self.btnSendMessage.frame = CGRectMake(Main_Screen_Width-40, 5, 30, 30);
@@ -170,7 +169,16 @@
         [UIView animateWithDuration:.25 animations:^{
             [self setFrame:CGRectMake(0, Main_Screen_Height- KeyboardOtherViewHeight - 40, Main_Screen_Width, 40)];
             [self.faceView setFrame:CGRectMake(0, Main_Screen_Height - KeyboardOtherViewHeight, self.frame.size.width, KeyboardOtherViewHeight)];
-        } completion:nil];
+        } completion:^(BOOL finished) {
+
+            if (self.delegate && [self.delegate respondsToSelector:@selector(faceViewChange:)]) {
+                
+                [self.delegate faceViewChange:self];
+            }
+        
+        
+        }];
+
     }else{
         
         isFaceView = NO;
@@ -526,6 +534,11 @@
         } completion:^(BOOL finished) {
             [self.faceView removeFromSuperview];
             self.faceViewBtn.selected = NO;
+            
+            if (self.delegate) {
+                
+                [self.delegate faceViewChange:self];
+            }
         }];
 
         

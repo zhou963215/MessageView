@@ -102,7 +102,7 @@
         }
         CGFloat startX = 10 + column * itemWidth + page * self.frame.size.width;
         CGFloat startY = line * itemWidth;
-        NSLog(@"%@",faceImageName);
+//        NSLog(@"%@",faceImageName);
         if ([faceImageName isEqualToString:@"[删除]"]) {
             deleteIndex++;
 //            if (!self.bundleFilePath) {
