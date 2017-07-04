@@ -7,6 +7,56 @@
 //
 
 #import "FaceKeyboardView.h"
+@interface FacePreviewView : UIView
+
+@property (weak, nonatomic) UILabel *faceLabel;
+@property (weak, nonatomic) UIImageView *backgroundImageView;
+
+@end
+
+@implementation FacePreviewView
+
+- (instancetype)initWithFrame:(CGRect)frame{
+    if ([super initWithFrame:frame]) {
+        [self setup];
+    }
+    return self;
+}
+
+- (void)setup{
+    
+    NSString *bundleFilePath= [[NSBundle mainBundle] pathForResource:@"Image" ofType:@"bundle"];
+    
+    UIImageView *backgroundImageView = [[UIImageView alloc] initWithImage:[UIImage imageWithContentsOfFile:[bundleFilePath stringByAppendingPathComponent:@"preview_background@2x"]]];
+    [self addSubview:self.backgroundImageView = backgroundImageView];
+    
+    UILabel *titleLabel = [[UILabel alloc] init];
+    titleLabel.userInteractionEnabled = YES;
+    titleLabel.backgroundColor = [UIColor clearColor];
+    titleLabel.textAlignment = NSTextAlignmentCenter;
+    titleLabel.font = [UIFont systemFontOfSize:28];
+    [self addSubview:self.faceLabel = titleLabel];
+    
+    self.bounds = self.backgroundImageView.bounds;
+}
+
+- (void)setFace:(NSString *)face{
+    if (self.faceLabel.text == face) {
+        return;
+    }
+    [self.faceLabel setText:face];
+    [self.faceLabel sizeToFit];
+    self.faceLabel.center = self.backgroundImageView.center;
+    [UIView animateWithDuration:.3 animations:^{
+        self.faceLabel.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1.3, 1.3);
+    } completion:^(BOOL finished) {
+        [UIView animateWithDuration:.2 animations:^{
+            self.faceLabel.transform = CGAffineTransformIdentity;
+        }];
+    }];
+}
+
+@end
 
 
 @interface FaceKeyboardView ()<UIScrollViewDelegate>
@@ -20,7 +70,7 @@
 
 @property (strong, nonatomic) UIScrollView *scrollView;
 @property (strong, nonatomic) UIPageControl *pageControl;
-//@property (strong, nonatomic) UIFacePreviewView *facePreviewView;
+@property (strong, nonatomic) FacePreviewView *facePreviewView;
 
 @property (strong, nonatomic) UIView *bottomView;
 @property (strong, nonatomic) UIButton *sendButton;
@@ -147,10 +197,16 @@
     
     self.userInteractionEnabled = YES;
     
-//    UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
-//    [self.scrollView addGestureRecognizer:longPress];
+    UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
+    [self.scrollView addGestureRecognizer:longPress];
 }
 
+- (FacePreviewView *)facePreviewView{
+    if (!_facePreviewView) {
+        _facePreviewView = [[FacePreviewView alloc] initWithFrame:CGRectZero];
+    }
+    return _facePreviewView;
+}
 - (void)handleTap:(UITapGestureRecognizer *)tap{
     NSString *faceName = _faceArray[tap.view.tag];
     NSInteger i = tap.view.tag;
@@ -163,12 +219,6 @@
         [self.delegate faceViewSendFace:faceName];
     }
     
-//    if (self.delegate) {
-//        
-//        [self.delegate faceViewSendFace:faceName];
-//        
-//    }
-
     
 }
 
@@ -276,6 +326,53 @@
 - (NSUInteger)maxLine{
     return 3;
 }
+
+- (void)handleLongPress:(UILongPressGestureRecognizer *)longPress{
+    CGPoint touchPoint = [longPress locationInView:self];
+    UIView *touchFaceView = [self faceViewWitnInPoint:touchPoint];
+    
+    if (longPress.state == UIGestureRecognizerStateBegan) {
+        [self.facePreviewView setCenter:CGPointMake(touchPoint.x, touchPoint.y - 40)];
+        if (touchFaceView.tag!=0){
+            //是表情
+            if (self.facePreviewView.superview == nil) {
+                [self.facePreviewView setFace:((UILabel *)touchFaceView).text];
+                [self addSubview:self.facePreviewView];
+            }
+        }else{
+            //是删除按钮
+            [self.facePreviewView removeFromSuperview];
+        }
+        
+    }else if (longPress.state == UIGestureRecognizerStateChanged){
+        
+        if (touchFaceView.tag!=0){
+            //是表情
+            if (self.facePreviewView.superview == nil) {
+                [self addSubview:self.facePreviewView];
+            }
+            [self.facePreviewView setCenter:CGPointMake(touchPoint.x, touchPoint.y - 40)];
+            [self.facePreviewView setFace:((UILabel *)touchFaceView).text];
+        }else{
+            //是删除按钮
+            [self.facePreviewView removeFromSuperview];
+        }
+        
+    }else if (longPress.state == UIGestureRecognizerStateEnded) {
+        [self.facePreviewView removeFromSuperview];
+    }
+}
+
+- (UIImageView *)faceViewWitnInPoint:(CGPoint)point{
+    
+    for (UIImageView *imageView in self.scrollView.subviews) {
+        if (CGRectContainsPoint(imageView.frame, CGPointMake(self.pageControl.currentPage * self.frame.size.width + point.x, point.y))) {
+            return imageView;
+        }
+    }
+    return nil;
+}
+
 
 
 @end

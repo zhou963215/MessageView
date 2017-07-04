@@ -91,8 +91,8 @@
         self.btnVoiceRecord.hidden = YES;
         [self.btnVoiceRecord setBackgroundImage:[UIImage imageNamed:@"chat_message_back"] forState:UIControlStateNormal];
         [self.btnVoiceRecord setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
-//        [self.btnVoiceRecord setTitleColor:[[UIColor blackColor] colorWithAlphaComponent:0.5] forState:UIControlStateHighlighted];
-        
+        [self.btnVoiceRecord setTitleColor:[[UIColor blackColor] colorWithAlphaComponent:0.5] forState:UIControlStateHighlighted];
+        [self.btnVoiceRecord setBackgroundImage:[UIImage imageNamed:@"chat_message_back"] forState:UIControlStateHighlighted];
         [self.btnVoiceRecord setTitle:@"按住  说话" forState:UIControlStateNormal];
         [self.btnVoiceRecord setTitle:@"松开  结束" forState:UIControlStateHighlighted];
         [self.btnVoiceRecord addTarget:self action:@selector(beginRecordVoice:) forControlEvents:UIControlEventTouchDown];
