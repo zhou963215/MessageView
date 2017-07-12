@@ -330,7 +330,7 @@
 - (void)handleLongPress:(UILongPressGestureRecognizer *)longPress{
     CGPoint touchPoint = [longPress locationInView:self];
     UIView *touchFaceView = [self faceViewWitnInPoint:touchPoint];
-    
+    NSLog(@"%@",NSStringFromCGPoint(touchPoint));
     if (longPress.state == UIGestureRecognizerStateBegan) {
         [self.facePreviewView setCenter:CGPointMake(touchPoint.x, touchPoint.y - 40)];
         if (touchFaceView.tag!=0){
