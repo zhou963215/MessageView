@@ -203,6 +203,7 @@ static NSString * previousTime = nil;
     [self tableViewScrollToBottom];
     
 }
+static int dateNum = 10;
 
 - (void)creatData{
     
@@ -215,11 +216,13 @@ static NSString * previousTime = nil;
         
         NSString *URLStr = @"http://cdn.duitang.com/uploads/item/201211/24/20121124074205_5LPfy.jpeg";
         [dataDic setObject:@(MessageFromOther) forKey:@"from"];
-        [dataDic setObject:[[NSDate date] description] forKey:@"strTime"];
+        NSDate *date = [[NSDate date]dateByAddingTimeInterval:arc4random()%1000*(dateNum++) ];
+        [dataDic setObject:[date description] forKey:@"strTime"];
         [dataDic setObject:@"Hello,Sister" forKey:@"strName"];
         [dataDic setObject:URLStr forKey:@"strIcon"];
-        
+      
         [message setWithDict:dataDic];
+        
         [message minuteOffSetStart:previousTime end:dataDic[@"strTime"]];
         messageFrame.showTime = message.showDateLabel;
         [messageFrame setMessage:message];

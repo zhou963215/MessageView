@@ -168,7 +168,6 @@
         self.labelNum.frame = CGRectMake(messageFrame.nameF.origin.x, messageFrame.nameF.origin.y + 3, 80, messageFrame.nameF.size.height);
         self.labelNum.textAlignment = NSTextAlignmentLeft;
     }
-    
     // 4、设置内容
     
     //prepare for reuse

@@ -68,9 +68,9 @@
 }
 -(void)stopPlay
 {
-    //    if(self.voice.isAnimating){
+        if(self.voice.isAnimating){
     [self.voice stopAnimating];
-    //    }
+        }
 }
 
 - (void)setIsMyMessage:(BOOL)isMyMessage
