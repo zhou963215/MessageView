@@ -44,14 +44,19 @@
 //
 //    NSLog(@"1--%d--2--%d--3--%d--4--%d",res1,res2,res3,res4);
     
+    
+    
+    
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(keyboardChange:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(keyboardChange:) name:UIKeyboardWillHideNotification object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(tableViewScrollToBottom) name:UIKeyboardDidShowNotification object:nil];
 
     [self.tableView registerClass:[MessageCell class] forCellReuseIdentifier:@"cell"];
-    
+    [self tableViewScrollToBottom];
 
 }
+
+
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     
@@ -126,38 +131,39 @@
 }
 
 #pragma mark - InputFunctionViewDelegate
+//文字消息
+
 - (void)MessageView:(MessageView *)funcView sendMessage:(NSString *)message
 {
     NSLog(@"%@",message);
     
-        
+    
     NSDictionary *dic = @{@"strContent": message,
                           @"type": @(MessageTypeText)};
     funcView.TextViewInput.text = @"";
     [self addObject:dic];
-//    [funcView changeSendBtnWithPhoto:YES];
-    
-//    [self dealTheFunctionData:dic];
+
 }
+
+//图片消息
 
 - (void)MessageView:(MessageView *)funcView sendPicture:(UIImage *)image
 {
     NSDictionary *dic = @{@"picture": image,
                           @"type": @(MessageTypePicture)};
-//    [self dealTheFunctionData:dic];
     [self addObject:dic];
 }
-
+//语音消息
 - (void)MessageView:(MessageView *)funcView sendVoice:(NSData *)voice time:(NSInteger)second
 {
     NSDictionary *dic = @{@"voice": voice,
                           @"strVoiceTime": [NSString stringWithFormat:@"%d",(int)second],
                           @"type": @(MessageTypeVoice)};
-//    [self dealTheFunctionData:dic];
     [self  addObject:dic];
 
 }
 
+//更改聊天视图表单高度
 - (void)faceViewChange:(MessageView *)funcView{
     
     CGFloat h = Main_Screen_Height - funcView.frame.origin.y;
@@ -177,7 +183,7 @@ static NSString * previousTime = nil;
 
 - (void)addObject:(NSDictionary * )dic{
     
-    
+
     MessageFrame *messageFrame = [[MessageFrame alloc]init];
     MessageModel * message = [[MessageModel alloc]init];
     NSMutableDictionary *dataDic = [NSMutableDictionary dictionaryWithDictionary:dic];
@@ -203,9 +209,15 @@ static NSString * previousTime = nil;
     [self tableViewScrollToBottom];
     
 }
-static int dateNum = 10;
+//static int dateNum = 10;
 
 - (void)creatData{
+    
+    
+    NSString *time1 = @"2017-06-23 12:18";
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    formatter.dateFormat = @"yyyy-MM-dd HH:mm";
+    NSDate *date = [formatter dateFromString:time1];
     
     
     for (int i = 0 ; i < 5 ; i ++) {
@@ -216,9 +228,9 @@ static int dateNum = 10;
         
         NSString *URLStr = @"http://cdn.duitang.com/uploads/item/201211/24/20121124074205_5LPfy.jpeg";
         [dataDic setObject:@(MessageFromOther) forKey:@"from"];
-        NSDate *date = [[NSDate date]dateByAddingTimeInterval:arc4random()%1000*(dateNum++) ];
+//        NSDate *date = [[NSDate date]dateByAddingTimeInterval:arc4random()%1000*(dateNum++) ];
         [dataDic setObject:[date description] forKey:@"strTime"];
-        [dataDic setObject:@"Hello,Sister" forKey:@"strName"];
+        [dataDic setObject:@"狗蛋" forKey:@"strName"];
         [dataDic setObject:URLStr forKey:@"strIcon"];
       
         [message setWithDict:dataDic];
@@ -242,21 +254,21 @@ static int dateNum = 10;
 }
 - (NSString *)getRandomString {
     
-    NSString *lorumIpsum = @"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent non quam ac massa viverra semper. Maecenas mattis justo ac augue volutpat congue. Maecenas laoreet, nulla eu faucibus gravida, felis orci dictum risus, sed sodales sem eros eget risus. Morbi imperdiet sed diam et sodales.";
+    NSString *lorumIpsum = @"我的志愿是做一个工程师,每天会做很多工程,下班后,我倒超级超市,买一大瓶可乐,一包卤水蛋,还有一包火腿,因为,减价啊!我的志愿是做一个消防队长,每天,我会扑灭很多火,下班后,我和我的队员小强,小明,芙蓉姐他们一起吃个套餐,有虾有鱼,还有可以选择冬瓜蛊代替例汤,可是要加三十元";
     
-    NSArray *lorumIpsumArray = [lorumIpsum componentsSeparatedByString:@" "];
+    NSArray *lorumIpsumArray = [lorumIpsum componentsSeparatedByString:@","];
     
     int r = arc4random() % [lorumIpsumArray count];
-    r = MAX(6, r); // no less than 6 words
+    r = MAX(12, r);
     NSArray *lorumIpsumRandom = [lorumIpsumArray objectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, r)]];
     
-    return [NSString stringWithFormat:@"%@!!", [lorumIpsumRandom componentsJoinedByString:@" "]];
+    return [NSString stringWithFormat:@"%@!!", [lorumIpsumRandom componentsJoinedByString:@","]];
 }
 
 #pragma mark - cellDelegate
 - (void)headImageDidClick:(MessageCell *)cell userId:(NSString *)userId{
     // headIamgeIcon is clicked
-    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:cell.messageFrame.message.strName message:@"headImage clicked" delegate:nil cancelButtonTitle:@"sure" otherButtonTitles:nil];
+    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:cell.messageFrame.message.strName message:@"头像点击" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
     [alert show];
 }
 - (void)didReceiveMemoryWarning {

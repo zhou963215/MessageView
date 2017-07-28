@@ -52,7 +52,7 @@
     NSString *dateStr;  //年月日
     NSString *period;   //时间段
     NSString *hour;     //时
-    
+    NSLog(@"==========%@",Str);
     if ([lastDate year]==[[NSDate date] year]) {
         NSInteger days = [NSDate daysOffsetBetweenStartDate:lastDate endDate:[NSDate date]];
         if (days <= 2) {
@@ -68,6 +68,10 @@
     if ([lastDate hour]>=5 && [lastDate hour]<12) {
         period = @"上午";
         hour = [NSString stringWithFormat:@"%02d",(int)[lastDate hour]];
+    }else if ([lastDate hour]==12){
+        period = @"中午";
+        hour = [NSString stringWithFormat:@"%02d",(int)[lastDate hour]];
+        
     }else if ([lastDate hour]>=12 && [lastDate hour]<=18){
         period = @"下午";
         hour = [NSString stringWithFormat:@"%02d",(int)[lastDate hour]-12];

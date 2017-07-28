@@ -44,12 +44,12 @@
         
         // 2、创建头像
         headImageBackView = [[UIView alloc]init];
-        headImageBackView.layer.cornerRadius = 22;
+        headImageBackView.layer.cornerRadius = 25;
         headImageBackView.layer.masksToBounds = YES;
         headImageBackView.backgroundColor = [[UIColor grayColor] colorWithAlphaComponent:0.4];
         [self.contentView addSubview:headImageBackView];
         self.btnHeadImage = [UIButton buttonWithType:UIButtonTypeCustom];
-        self.btnHeadImage.layer.cornerRadius = 20;
+        self.btnHeadImage.layer.cornerRadius = 23;
         self.btnHeadImage.layer.masksToBounds = YES;
         [self.btnHeadImage addTarget:self action:@selector(btnHeadImageClick:)  forControlEvents:UIControlEventTouchUpInside];
         [headImageBackView addSubview:self.btnHeadImage];
@@ -160,6 +160,14 @@
     
     [self.btnHeadImage sd_setBackgroundImageWithURL:[NSURL URLWithString:message.strIcon] forState:UIControlStateNormal placeholderImage:[UIImage imageNamed:@"chatfrom_doctor_icon"]];
     // 3、设置下标
+    
+    if (message.from == MessageFromMe) {
+        
+        self.labelNum.hidden  = YES;
+        
+    }else{
+        self.labelNum.hidden  = NO;
+
     self.labelNum.text = message.strName;
     if (messageFrame.nameF.origin.x > 160) {
         self.labelNum.frame = CGRectMake(messageFrame.nameF.origin.x - 50, messageFrame.nameF.origin.y + 3, 100, messageFrame.nameF.size.height);
@@ -168,6 +176,10 @@
         self.labelNum.frame = CGRectMake(messageFrame.nameF.origin.x, messageFrame.nameF.origin.y + 3, 80, messageFrame.nameF.size.height);
         self.labelNum.textAlignment = NSTextAlignmentLeft;
     }
+    
+    }
+   
+    
     // 4、设置内容
     
     //prepare for reuse
@@ -191,7 +203,7 @@
     UIImage *normal;
     if (message.from == MessageFromMe) {
         normal = [UIImage imageNamed:@"chatto_bg_normal"];
-        normal = [normal resizableImageWithCapInsets:UIEdgeInsetsMake(35, 10, 10, 22)];
+        normal = [normal resizableImageWithCapInsets:UIEdgeInsetsMake(35, 10, 10, 20)];
     }
     else{
         normal = [UIImage imageNamed:@"chatfrom_bg_normal"];
@@ -215,7 +227,7 @@
         case MessageTypeVoice:
         {
             self.btnContent.voiceBackView.hidden = NO;
-            self.btnContent.second.text = [NSString stringWithFormat:@"%@'s Voice",message.strVoiceTime];
+            self.btnContent.second.text = [NSString stringWithFormat:@"%@'s ",message.strVoiceTime];
             songData = message.voice;
 //            voiceURL = [NSString stringWithFormat:@"%@%@",RESOURCE_URL_HOST,message.strVoice];
         }

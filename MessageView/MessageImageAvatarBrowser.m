@@ -12,13 +12,14 @@ static UIImageView *orginImageView;
 @implementation MessageImageAvatarBrowser
 
 +(void)showImage:(UIImageView *)avatarImageView{
+    
     UIImage *image=avatarImageView.image;
     orginImageView = avatarImageView;
     orginImageView.alpha = 0;
     UIWindow *window=[UIApplication sharedApplication].keyWindow;
     UIView *backgroundView=[[UIView alloc]initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height)];
     CGRect oldframe=[avatarImageView convertRect:avatarImageView.bounds toView:window];
-    backgroundView.backgroundColor=[[UIColor blackColor] colorWithAlphaComponent:0.7];
+    backgroundView.backgroundColor=[[UIColor blackColor] colorWithAlphaComponent:1.0];
     backgroundView.alpha=1;
     UIImageView *imageView=[[UIImageView alloc]initWithFrame:oldframe];
     imageView.image=image;

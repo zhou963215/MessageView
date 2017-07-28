@@ -77,10 +77,13 @@
 {
     _isMyMessage = isMyMessage;
     if (isMyMessage) {
+        
         self.backImageView.frame = CGRectMake(5, 5, 220, 220);
-        self.voiceBackView.frame = CGRectMake(15, 10, 130, 35);
+        self.voiceBackView.frame = CGRectMake(2, 2, 130, 35);
         self.second.textColor = [UIColor whiteColor];
+        
     }else{
+        
         self.backImageView.frame = CGRectMake(15, 5, 220, 220);
         self.voiceBackView.frame = CGRectMake(25, 10, 130, 35);
         self.second.textColor = [UIColor grayColor];
