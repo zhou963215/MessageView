@@ -1,21 +1,23 @@
 //
 //  Mp3Recorder.h
-//  artExamAssistant
+//  BloodSugar
 //
-//  Created by Zanilia on 15/12/11.
-//  Copyright © 2015年 北京知远信息科技有限公司. All rights reserved.
+//  Created by PeterPan on 14-3-24.
+//  Copyright (c) 2014年 shake. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
-#import <AVFoundation/AVFoundation.h>
-#import "UIVoiceKeyboardView.h"
-#import "NSVoiceConverter.h"
+
+@protocol Mp3RecorderDelegate <NSObject>
+- (void)failRecord;
+- (void)beginConvert;
+- (void)endConvertWithData:(NSData *)voiceData;
+@end
 
 @interface Mp3Recorder : NSObject
+@property (nonatomic, weak) id<Mp3RecorderDelegate> delegate;
 
-@property (nonatomic) BOOL isRecording;
-@property (nonatomic, strong)void (^ didFinishRecorded)(NSString *filePath, NSTimeInterval time);
-
+- (id)initWithDelegate:(id<Mp3RecorderDelegate>)delegate;
 - (void)startRecord;
 - (void)stopRecord;
 - (void)cancelRecord;

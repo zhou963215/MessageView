@@ -14,7 +14,7 @@
 #import <SDWebImage/UIButton+WebCache.h>
 @interface MessageCell ()<MMAVAudioPlayerDelegate>
 {
-    AVAudioPlayer *player;
+//    AVAudioPlayer *player;
     NSString *voiceURL;
     NSData *songData;
     
@@ -23,6 +23,8 @@
     UIView *headImageBackView;
     BOOL contentVoiceIsPlaying;
 }
+
+//@property (strong ,nonatomic)    AVAudioPlayer *player;
 
 @end
 @implementation MessageCell

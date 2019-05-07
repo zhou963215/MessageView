@@ -1,171 +1,230 @@
 //
 //  Mp3Recorder.m
-//  artExamAssistant
+//  BloodSugar
 //
-//  Created by Zanilia on 15/12/11.
-//  Copyright © 2015年 北京知远信息科技有限公司. All rights reserved.
+//  Created by PeterPan on 14-3-24.
+//  Copyright (c) 2014年 shake. All rights reserved.
 //
 
 #import "Mp3Recorder.h"
+#import "lame.h"
+#import <AVFoundation/AVFoundation.h>
+#import "UIVoiceKeyboardView.h"
 #define ReordTimemMAX   60.0
 #define XMAXVALUE_VOICE       40
-
-@interface Mp3Recorder ()<AVAudioRecorderDelegate>
+@interface Mp3Recorder()<AVAudioRecorderDelegate>
 {
-    AVAudioRecorder * _audioRecorder;  //  录音器
-    AVAudioSession *_audioSession;
-    NSDictionary *_settings;
-    
     NSTimer * _recorderTimer;          //  录音计时器
-    NSString* _lastRecordFile;         //  最后 录音的文件名字
-    NSDate              *_recorderStartDate;
-    NSDate              *_recorderEndDate;
-    NSString *_pathURL;
     NSTimeInterval  _recordTime;
 
+
 }
+@property (nonatomic, strong) AVAudioSession *session;
+@property (nonatomic, strong) AVAudioRecorder *recorder;
+@property (nonatomic, strong) NSString *path;
 @end
 
 @implementation Mp3Recorder
 
-- (instancetype)init{
-    if (self = [super init]) {
-        _lastRecordFile = nil;
-        _recordTime = 0;
-        _isRecording = NO;
-        _audioSession = [AVAudioSession sharedInstance];
+#pragma mark - Init Methods
 
-        _settings=[NSDictionary dictionaryWithObjectsAndKeys:
-                                [NSNumber numberWithFloat:8000],AVSampleRateKey,
-                                [NSNumber numberWithInt:kAudioFormatLinearPCM],AVFormatIDKey,
-                                [NSNumber numberWithInt:1],AVNumberOfChannelsKey,
-                                [NSNumber numberWithInt:16],AVLinearPCMBitDepthKey,
-                                [NSNumber numberWithBool:NO],AVLinearPCMIsBigEndianKey,
-                                [NSNumber numberWithBool:NO],AVLinearPCMIsFloatKey,
-                                nil];
-        [_audioSession setCategory: AVAudioSessionCategoryPlayAndRecord error: nil];
-        [_audioSession setActive:YES error:nil];
-        
+- (id)initWithDelegate:(id<Mp3RecorderDelegate>)delegate
+{
+    if (self = [super init]) {
+        _recordTime = 0;
+
+        _delegate = delegate;
+        _path = [self mp3Path];
     }
     return self;
 }
 
-- (void)startRecord{
-    AVAudioSession * session = [AVAudioSession sharedInstance];
-    NSError * sessionError;
-    [session setCategory:AVAudioSessionCategoryRecord error:&sessionError];
-    if(session == nil){
-        NSLog(@"Error creating session: %@", [sessionError description]);
-    }else{
-        [session setActive:YES error:nil];
+- (void)setRecorder
+{
+    _recorder = nil;
+    NSError *recorderSetupError = nil;
+    NSURL *url = [NSURL fileURLWithPath:[self cafPath]];
+    NSMutableDictionary *settings = [[NSMutableDictionary alloc] init];
+    //录音格式 无法使用
+    [settings setValue :[NSNumber numberWithInt:kAudioFormatLinearPCM] forKey: AVFormatIDKey];
+    //采样率
+    [settings setValue :[NSNumber numberWithFloat:11025.0] forKey: AVSampleRateKey];//44100.0
+    //通道数
+    [settings setValue :[NSNumber numberWithInt:2] forKey: AVNumberOfChannelsKey];
+    //音频质量,采样质量
+    [settings setValue:[NSNumber numberWithInt:AVAudioQualityMin] forKey:AVEncoderAudioQualityKey];
+    _recorder = [[AVAudioRecorder alloc] initWithURL:url
+                                            settings:settings
+                                               error:&recorderSetupError];
+    if (recorderSetupError) {
+        NSLog(@"%@",recorderSetupError);
     }
-    [UIVoiceKeyboardView showVoiceHUD];
-    
-    if (_isRecording) {
-        return;
-    }
-    _isRecording = YES;
+    _recorder.meteringEnabled = YES;
+    _recorder.delegate = self;
     _recordTime = 0;
-
-    int x = arc4random() % 100000;
-    NSTimeInterval time = [[NSDate date] timeIntervalSince1970];
-    NSString *fileName = [NSString stringWithFormat:@"%d%d",(int)time,x];
-    NSString *recordPath = NSHomeDirectory();
-    recordPath = [NSString stringWithFormat:@"%@/Library/appdata/chatbuffer/%@",recordPath,fileName];
-    NSFileManager *fm = [NSFileManager defaultManager];
-    if(![fm fileExistsAtPath:[recordPath stringByDeletingLastPathComponent]]){
-        [fm createDirectoryAtPath:[recordPath stringByDeletingLastPathComponent]
-      withIntermediateDirectories:YES
-                       attributes:nil
-                            error:nil];
-    }
-    NSString *wavFilePath = [[recordPath stringByDeletingPathExtension]
-                             stringByAppendingPathExtension:@"wav"];
-    _pathURL = wavFilePath;
-    // ---- 基本设置 ----
-    NSError *error;
-    _audioRecorder = [[AVAudioRecorder alloc] initWithURL:[NSURL fileURLWithPath:_pathURL] settings:_settings error:&error];
-    _audioRecorder.delegate = self;
-    _audioRecorder.meteringEnabled = YES;
+    [UIVoiceKeyboardView showVoiceHUD];
     _recorderTimer = [NSTimer scheduledTimerWithTimeInterval:0.02 target:self selector:@selector(_updateTime) userInfo:nil repeats:YES];
-    [_recorderTimer fire];
-    [_audioRecorder prepareToRecord];
-    [_audioRecorder peakPowerForChannel:0];
-    [_audioRecorder record]; // 开始
+    [_recorder prepareToRecord];
 
 }
 
-- (void)stopRecord{
-    [_audioRecorder stop];
-    [_recorderTimer invalidate];
-    _recorderTimer = nil;
-    _audioRecorder = nil;
-    if (_recordTime<1) {
-        [UIVoiceKeyboardView showFailVoiceHUD];
-        _isRecording = NO;
-        return;
-    }
-    [self finishedRecord];
+- (void)setSesstion
+{
+    _session = [AVAudioSession sharedInstance];
+    NSError *sessionError;
+    [_session setCategory:AVAudioSessionCategoryPlayAndRecord error:&sessionError];
+    
+    if(_session == nil)
+        NSLog(@"Error creating session: %@", [sessionError description]);
+    else
+        [_session setActive:YES error:nil];
     
 }
 
-- (void)cancelRecord{
-    _isRecording = NO;
-    [_recorderTimer invalidate];
-    _recorderTimer = nil;
-    [_audioRecorder stop];
+#pragma mark - Public Methods
+- (void)setSavePath:(NSString *)path
+{
+    self.path = path;
 }
+
+- (void)startRecord
+{
+   
+    [self setSesstion];
+    [self setRecorder];
+   
+    [_recorder record];
+}
+
 
 - (void)_updateTime{
+    
     _recordTime+=0.02;
-    if (_recordTime >= ReordTimemMAX) {
-        [UIVoiceKeyboardView hideVoiceHUD];
+    [_recorder updateMeters];
+    float avg = [_recorder averagePowerForChannel:0];
+    NSLog(@"%f",avg);
+    float valueInfo = (XMAXVALUE_VOICE + avg)/XMAXVALUE_VOICE;
+    [[UIVoiceKeyboardView shareVoiceView] setAveragePower:valueInfo andTimeLength:fabs(_recordTime)];
+
+    
+}
+- (void)stopRecord
+{
+    double cTime = _recorder.currentTime;
+    [_recorder stop];
+    
+    if (cTime > 1) {
+        [self audio_PCMtoMP3];
         [_recorderTimer invalidate];
         _recorderTimer = nil;
-        _isRecording = NO;
-        [_audioRecorder stop];
-        _audioRecorder = nil;
-        [self finishedRecord];
-        return;
-    }
-    [_audioRecorder updateMeters];
-    float avg = [_audioRecorder averagePowerForChannel:0];
-    float valueInfo = (XMAXVALUE_VOICE + avg)/XMAXVALUE_VOICE;
-    
-    [[UIVoiceKeyboardView shareVoiceView] setAveragePower:valueInfo andTimeLength:fabs(_recordTime)];
-}
-
-- (void)finishedRecord{
-    if (_isRecording) {
-        NSString *amrFilePath = [[_pathURL stringByDeletingPathExtension]
-                                 stringByAppendingPathExtension:@"amr"];
-        BOOL convertResult = [self convertWAV:_pathURL toAMR:amrFilePath];
-        if (convertResult) {
-            NSFileManager *fm = [NSFileManager defaultManager];
-            [fm removeItemAtPath:_pathURL error:nil];
-            if (_didFinishRecorded) {
-                _didFinishRecorded(amrFilePath, _recordTime);
-            }
+        _recordTime = 0;
+        
+    }else {
+        
+        [_recorder deleteRecording];
+        
+        if ([_delegate respondsToSelector:@selector(failRecord)]) {
+            [_delegate failRecord];
         }
     }
-    _isRecording = NO;
 }
 
-- (BOOL)convertWAV:(NSString *)wavFilePath
-             toAMR:(NSString *)amrFilePath {
-    BOOL ret = NO;
-    BOOL isFileExists = [[NSFileManager defaultManager] fileExistsAtPath:wavFilePath];
-    if (isFileExists) {
-        [NSVoiceConverter wavToAmr:wavFilePath amrSavePath:amrFilePath];
-        isFileExists = [[NSFileManager defaultManager] fileExistsAtPath:amrFilePath];
-        if (!isFileExists) {
+- (void)cancelRecord
+{
+    [_recorder stop];
+    [_recorder deleteRecording];
+}
+
+- (void)deleteMp3Cache
+{
+    [self deleteFileWithPath:[self mp3Path]];
+}
+
+- (void)deleteCafCache
+{
+    [self deleteFileWithPath:[self cafPath]];
+}
+
+- (void)deleteFileWithPath:(NSString *)path
+{
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    if([fileManager removeItemAtPath:path error:nil])
+    {
+        NSLog(@"删除以前的mp3文件");
+    }
+}
+
+#pragma mark - Convert Utils
+- (void)audio_PCMtoMP3
+{
+    NSString *cafFilePath = [self cafPath];
+    NSString *mp3FilePath = [self mp3Path];
+    
+    // remove the old mp3 file
+    [self deleteMp3Cache];
+
+    NSLog(@"MP3转换开始");
+    if (_delegate && [_delegate respondsToSelector:@selector(beginConvert)]) {
+        [_delegate beginConvert];
+    }
+    @try {
+        int read, write;
+        
+        FILE *pcm = fopen([cafFilePath cStringUsingEncoding:1], "rb");  //source 被转换的音频文件位置
+        fseek(pcm, 4*1024, SEEK_CUR);                                   //skip file header
+        FILE *mp3 = fopen([mp3FilePath cStringUsingEncoding:1], "wb");  //output 输出生成的Mp3文件位置
+        
+        const int PCM_SIZE = 8192;
+        const int MP3_SIZE = 8192;
+        short int pcm_buffer[PCM_SIZE*2];
+        unsigned char mp3_buffer[MP3_SIZE];
+        
+        lame_t lame = lame_init();
+        lame_set_in_samplerate(lame, 11025.0);
+        lame_set_VBR(lame, vbr_default);
+        lame_init_params(lame);
+        
+        do {
+            read = fread(pcm_buffer, 2*sizeof(short int), PCM_SIZE, pcm);
+            if (read == 0)
+                write = lame_encode_flush(lame, mp3_buffer, MP3_SIZE);
+            else
+                write = lame_encode_buffer_interleaved(lame, pcm_buffer, read, mp3_buffer, MP3_SIZE);
             
-        } else {
-            ret = YES;
-        }
+            fwrite(mp3_buffer, write, 1, mp3);
+            
+        } while (read != 0);
+        
+        lame_close(lame);
+        fclose(mp3);
+        fclose(pcm);
+    }
+    @catch (NSException *exception) {
+        NSLog(@"%@",[exception description]);
+    }
+    @finally {
+        [[AVAudioSession sharedInstance] setCategory: AVAudioSessionCategorySoloAmbient error: nil];
     }
     
-    return ret;
+    [self deleteCafCache];
+    NSLog(@"MP3转换结束");
+    if (_delegate && [_delegate respondsToSelector:@selector(endConvertWithData:)]) {
+        NSData *voiceData = [NSData dataWithContentsOfFile:[self mp3Path]];
+        [_delegate endConvertWithData:voiceData];
+    }
+}
+
+#pragma mark - Path Utils
+- (NSString *)cafPath
+{
+    NSString *cafPath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"tmp.caf"];
+    return cafPath;
+}
+
+- (NSString *)mp3Path
+{
+    NSString *mp3Path = [NSTemporaryDirectory() stringByAppendingPathComponent:@"mp3.caf"];
+    return mp3Path;
 }
 
 @end

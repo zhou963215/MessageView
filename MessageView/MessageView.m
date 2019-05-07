@@ -36,16 +36,19 @@
 
 #define KeyboardOtherViewHeight     210.f
 
-@interface MessageView ()<UITextViewDelegate,FaceKeyboardViewDelegate>
+@interface MessageView ()<UITextViewDelegate,FaceKeyboardViewDelegate,Mp3RecorderDelegate>
 
 {
     BOOL isbeginVoiceRecord;
     BOOL isFaceView;
     UILabel *placeHold;
+    Mp3Recorder *MP3;
+    NSInteger playTime;
+    NSTimer *playTimer;
+
 
 }
 @property (strong, nonatomic) NSString *inputText;
-@property (strong, nonatomic) Mp3Recorder *mp3Recorder;
 
 @property (strong, nonatomic) FaceKeyboardView * faceView;
 
@@ -60,15 +63,15 @@
     
     
     self.superVC = superVC;
-    CGRect frame = CGRectMake(0, Main_Screen_Height-40, Main_Screen_Width, 40);
+    CGRect frame = CGRectMake(0, Main_Screen_Height-44, Main_Screen_Width, 44);
     self = [super initWithFrame:frame];
 
     if (self) {
-        
+         MP3 = [[Mp3Recorder alloc]initWithDelegate:self];
         self.backgroundColor = [UIColor whiteColor];
         //发送消息
         self.btnSendMessage = [UIButton buttonWithType:UIButtonTypeCustom];
-        self.btnSendMessage.frame = CGRectMake(Main_Screen_Width-40, 5, 30, 30);
+        self.btnSendMessage.frame = CGRectMake(Main_Screen_Width-40, 7, 30, 30);
         self.isAbleToSendTextMessage = NO;
         [self.btnSendMessage setTitle:@"" forState:UIControlStateNormal];
         [self.btnSendMessage setBackgroundImage:[UIImage imageNamed:@"Chat_take_picture"] forState:UIControlStateNormal];
@@ -78,7 +81,7 @@
         
         //改变状态（语音、文字）
         self.btnChangeVoiceState = [UIButton buttonWithType:UIButtonTypeCustom];
-        self.btnChangeVoiceState.frame = CGRectMake(5, 5, 30, 30);
+        self.btnChangeVoiceState.frame = CGRectMake(5, 7, 30, 30);
         isbeginVoiceRecord = NO;
         [self.btnChangeVoiceState setBackgroundImage:[UIImage imageNamed:@"chat_voice_record"] forState:UIControlStateNormal];
         self.btnChangeVoiceState.titleLabel.font = [UIFont systemFontOfSize:12];
@@ -87,7 +90,7 @@
         
         //语音录入键
         self.btnVoiceRecord = [UIButton buttonWithType:UIButtonTypeCustom];
-        self.btnVoiceRecord.frame = CGRectMake(45, 5, Main_Screen_Width-3*45, 30);
+        self.btnVoiceRecord.frame = CGRectMake(45, 7, Main_Screen_Width-3*45, 30);
         self.btnVoiceRecord.hidden = YES;
         [self.btnVoiceRecord setBackgroundImage:[UIImage imageNamed:@"chat_message_back"] forState:UIControlStateNormal];
         [self.btnVoiceRecord setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
@@ -103,21 +106,24 @@
         [self addSubview:self.btnVoiceRecord];
         
         //输入框
-        self.TextViewInput = [[UITextView alloc]initWithFrame:CGRectMake(45, 5, Main_Screen_Width-3*45, 30)];
+        self.TextViewInput = [[UITextView alloc]initWithFrame:CGRectMake(45, 5, Main_Screen_Width-3*45, 34)];
         self.TextViewInput.layer.cornerRadius = 4;
         self.TextViewInput.layer.masksToBounds = YES;
         self.TextViewInput.delegate = self;
         self.TextViewInput.font = [UIFont systemFontOfSize:15];
         self.TextViewInput.layer.borderWidth = 1;
+        self.TextViewInput.layoutManager.allowsNonContiguousLayout = NO;
+        self.TextViewInput.returnKeyType = UIReturnKeySend;
         self.TextViewInput.layer.borderColor = [[[UIColor lightGrayColor] colorWithAlphaComponent:0.4] CGColor];
         [self addSubview:self.TextViewInput];
         
         self.faceViewBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        self.faceViewBtn.frame = CGRectMake(Main_Screen_Width-80, 5 , 30, 30);
+        self.faceViewBtn.frame = CGRectMake(Main_Screen_Width-80, 7 , 30, 30);
         [self.faceViewBtn setBackgroundImage:[UIImage imageNamed:@"ToolViewEmotionHL"] forState:UIControlStateNormal];
         [self.faceViewBtn setBackgroundImage:[UIImage imageNamed:@"chat_ipunt_message"] forState:UIControlStateSelected];
         [self.faceViewBtn addTarget:self action:@selector(faceClick:) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:self.faceViewBtn];
+        
         //输入框的提示语
         placeHold = [[UILabel alloc]initWithFrame:CGRectMake(20, 2, 200, 30)];
         placeHold.text = @" 说点什么吧 ";
@@ -137,15 +143,7 @@
     return self;
 }
 
-- (Mp3Recorder *)mp3Recorder{
-    
-    if (!_mp3Recorder) {
-        
-        _mp3Recorder = [[Mp3Recorder alloc]init];
-    }
-    
-    return _mp3Recorder;
-}
+
 //表情界面
 - (void)faceClick:(UIButton *)button{
     
@@ -154,7 +152,7 @@
     self.TextViewInput.hidden = NO;
     self.btnVoiceRecord.hidden = YES;
     isbeginVoiceRecord = NO;
-      [self.btnChangeVoiceState setBackgroundImage:[UIImage imageNamed:@"chat_voice_record"] forState:UIControlStateNormal];
+    [self.btnChangeVoiceState setBackgroundImage:[UIImage imageNamed:@"chat_voice_record"] forState:UIControlStateNormal];
     [self showFaceView:button.selected];
     
 }
@@ -167,7 +165,7 @@
         isFaceView = YES;
         [self.superview addSubview:self.faceView];
         [UIView animateWithDuration:.25 animations:^{
-            [self setFrame:CGRectMake(0, Main_Screen_Height- KeyboardOtherViewHeight - 40, Main_Screen_Width, 40)];
+            [self setFrame:CGRectMake(0, Main_Screen_Height- KeyboardOtherViewHeight - 44, Main_Screen_Width, 44)];
             [self.faceView setFrame:CGRectMake(0, Main_Screen_Height - KeyboardOtherViewHeight, self.frame.size.width, KeyboardOtherViewHeight)];
         } completion:^(BOOL finished) {
 
@@ -175,7 +173,6 @@
                 
                 [self.delegate faceViewChange:self];
             }
-        
         
         }];
 
@@ -185,9 +182,8 @@
         [self.TextViewInput becomeFirstResponder];
         [UIView animateWithDuration:.25 animations:^{
             
-//            [self setFrame:CGRectMake(0, Main_Screen_Height - 40, Main_Screen_Width, 40)];
-            
             [self.faceView setFrame:CGRectMake(0, Main_Screen_Height, self.frame.size.width, KeyboardOtherViewHeight)];
+            
         } completion:^(BOOL finished) {
             [self.faceView removeFromSuperview];
         }];
@@ -289,29 +285,28 @@
 - (void)beginRecordVoice:(UIButton *)button
 {
 
-
     [UIVoiceKeyboardView showVoiceHUD];
-    [self.mp3Recorder startRecord];
-    __block MessageView *wealSelf = self;
-
-    [_mp3Recorder setDidFinishRecorded:^(NSString *filePath, NSTimeInterval time){
-       
-        NSData * data = [NSData dataWithContentsOfFile:filePath];
-        if (wealSelf.delegate && [wealSelf.delegate respondsToSelector:@selector(MessageView:sendVoice:time:)]) {
-            
-            [wealSelf.delegate MessageView:wealSelf sendVoice:data time: time];
-        }
-        
-        
-    }];
+    [MP3 startRecord];
+    playTime = 0;
+    playTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(countVoiceTime) userInfo:nil repeats:YES];
 }
-
+- (void)countVoiceTime
+{
+    playTime ++;
+    if (playTime>=60) {
+        [self endRecordVoice:nil];
+    }
+}
 //
 - (void)endRecordVoice:(UIButton *)button
 {
+    if (playTimer) {
+        [MP3 stopRecord];
+        [playTimer invalidate];
+        playTimer = nil;
+    }
 
     [UIVoiceKeyboardView hideVoiceHUD];
-    [_mp3Recorder stopRecord];
 
 
 }
@@ -319,37 +314,40 @@
 - (void)cancelRecordVoice:(UIButton *)button
 {
 
+    if (playTimer) {
+        [MP3 stopRecord];
+        [playTimer invalidate];
+        playTimer = nil;
+    }
     [UIVoiceKeyboardView hideVoiceHUD];
-    [_mp3Recorder stopRecord];
-    _mp3Recorder.didFinishRecorded = nil;
+   
 
 }
 
 - (void)RemindDragExit:(UIButton *)button
 {
     [UIVoiceKeyboardView showCancelSendVoiceHUD];
-    _mp3Recorder.didFinishRecorded = nil;
 
 }
 
 - (void)RemindDragEnter:(UIButton *)button
 {
     [UIVoiceKeyboardView showVoiceHUD];
-    __block MessageView *wealSelf = self;
-    
-    [_mp3Recorder setDidFinishRecorded:^(NSString *filePath, NSTimeInterval time){
-        
-        NSData * data = [NSData dataWithContentsOfFile:filePath];
-        if (wealSelf.delegate && [wealSelf.delegate respondsToSelector:@selector(MessageView:sendVoice:time:)]) {
-            
-            [wealSelf.delegate MessageView:wealSelf sendVoice:data time: time];
-        }
-        
-        
-    }];
+   
 }
 
+//回调录音资料
+- (void)endConvertWithData:(NSData *)voiceData
+{
+    [self.delegate MessageView:self sendVoice:voiceData time:playTime+1];
+    [UIVoiceKeyboardView hideVoiceHUD];
 
+    //缓冲消失时间 (最好有block回调消失完成)
+    self.btnVoiceRecord.enabled = NO;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        self.btnVoiceRecord.enabled = YES;
+    });
+}
 
 
 
@@ -405,6 +403,24 @@
 - (void)textViewDidChange:(UITextView *)textView
 {
     placeHold.hidden = textView.text.length>0;
+    [self.TextViewInput scrollRangeToVisible:NSMakeRange(textView.text.length, 1)];
+    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    
+    paragraphStyle.lineSpacing = 5;// 字体的行间距
+    
+    
+    
+    NSDictionary *attributes = @{
+                                 
+                                 NSFontAttributeName:[UIFont systemFontOfSize:15],
+                                 
+                                 NSParagraphStyleAttributeName:paragraphStyle
+                                 
+                                 };
+    
+    textView.attributedText = [[NSAttributedString alloc] initWithString:textView.text attributes:attributes];
+    
+
 }
 
 
@@ -528,7 +544,7 @@
         
         [UIView animateWithDuration:.25 animations:^{
             
-            [self setFrame:CGRectMake(0, Main_Screen_Height - 40, Main_Screen_Width, 40)];
+            [self setFrame:CGRectMake(0, Main_Screen_Height - 44, Main_Screen_Width, 44)];
             
             [self.faceView setFrame:CGRectMake(0, Main_Screen_Height, self.frame.size.width, KeyboardOtherViewHeight)];
         } completion:^(BOOL finished) {

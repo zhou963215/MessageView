@@ -44,12 +44,6 @@
 		CB15BB181F06286D00D95DC2 /* recordingSignal006@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = CB15BB0F1F06286D00D95DC2 /* recordingSignal006@3x.png */; };
 		CB15BB191F06286D00D95DC2 /* recordingSignal007@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = CB15BB101F06286D00D95DC2 /* recordingSignal007@3x.png */; };
 		CB15BB1B1F06293700D95DC2 /* Image.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CB15BB1A1F06293700D95DC2 /* Image.bundle */; };
-		CB15BB2E1F062D3700D95DC2 /* amrFileCodec.mm in Sources */ = {isa = PBXBuildFile; fileRef = CB15BB1F1F062D3700D95DC2 /* amrFileCodec.mm */; };
-		CB15BB2F1F062D3700D95DC2 /* wav.mm in Sources */ = {isa = PBXBuildFile; fileRef = CB15BB211F062D3700D95DC2 /* wav.mm */; };
-		CB15BB301F062D3700D95DC2 /* Mp3Recorder.m in Sources */ = {isa = PBXBuildFile; fileRef = CB15BB231F062D3700D95DC2 /* Mp3Recorder.m */; };
-		CB15BB311F062D3700D95DC2 /* NSVoiceConverter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CB15BB251F062D3700D95DC2 /* NSVoiceConverter.mm */; };
-		CB15BB321F062D3700D95DC2 /* libopencore-amrnb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CB15BB291F062D3700D95DC2 /* libopencore-amrnb.a */; };
-		CB15BB331F062D3700D95DC2 /* libopencore-amrwb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CB15BB2D1F062D3700D95DC2 /* libopencore-amrwb.a */; };
 		CB15BB361F06379800D95DC2 /* chat_voice_record@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CB15BB341F06379800D95DC2 /* chat_voice_record@2x.png */; };
 		CB15BB371F06379800D95DC2 /* chat_ipunt_message@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CB15BB351F06379800D95DC2 /* chat_ipunt_message@2x.png */; };
 		CB15BB3A1F0638D700D95DC2 /* Chat_take_picture@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CB15BB381F0638D700D95DC2 /* Chat_take_picture@2x.png */; };
@@ -61,6 +55,8 @@
 		CB19714C1F1473C500675006 /* MessageAVAudioPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = CB19714B1F1473C500675006 /* MessageAVAudioPlayer.m */; };
 		CB19714F1F14B03C00675006 /* MessageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CB19714E1F14B03C00675006 /* MessageCell.m */; };
 		CB1971521F15F87C00675006 /* MessageImageAvatarBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = CB1971511F15F87C00675006 /* MessageImageAvatarBrowser.m */; };
+		CBCD111B205EBFF80092F9A6 /* libmp3lame.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CBCD1117205EBFF80092F9A6 /* libmp3lame.a */; };
+		CBCD111C205EBFF80092F9A6 /* Mp3Recorder.m in Sources */ = {isa = PBXBuildFile; fileRef = CBCD1119205EBFF80092F9A6 /* Mp3Recorder.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -131,20 +127,6 @@
 		CB15BB0F1F06286D00D95DC2 /* recordingSignal006@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "recordingSignal006@3x.png"; sourceTree = "<group>"; };
 		CB15BB101F06286D00D95DC2 /* recordingSignal007@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "recordingSignal007@3x.png"; sourceTree = "<group>"; };
 		CB15BB1A1F06293700D95DC2 /* Image.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Image.bundle; sourceTree = "<group>"; };
-		CB15BB1E1F062D3700D95DC2 /* amrFileCodec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = amrFileCodec.h; sourceTree = "<group>"; };
-		CB15BB1F1F062D3700D95DC2 /* amrFileCodec.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = amrFileCodec.mm; sourceTree = "<group>"; };
-		CB15BB201F062D3700D95DC2 /* wav.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wav.h; sourceTree = "<group>"; };
-		CB15BB211F062D3700D95DC2 /* wav.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = wav.mm; sourceTree = "<group>"; };
-		CB15BB221F062D3700D95DC2 /* Mp3Recorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mp3Recorder.h; sourceTree = "<group>"; };
-		CB15BB231F062D3700D95DC2 /* Mp3Recorder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Mp3Recorder.m; sourceTree = "<group>"; };
-		CB15BB241F062D3700D95DC2 /* NSVoiceConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSVoiceConverter.h; sourceTree = "<group>"; };
-		CB15BB251F062D3700D95DC2 /* NSVoiceConverter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NSVoiceConverter.mm; sourceTree = "<group>"; };
-		CB15BB271F062D3700D95DC2 /* interf_dec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = interf_dec.h; sourceTree = "<group>"; };
-		CB15BB281F062D3700D95DC2 /* interf_enc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = interf_enc.h; sourceTree = "<group>"; };
-		CB15BB291F062D3700D95DC2 /* libopencore-amrnb.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libopencore-amrnb.a"; sourceTree = "<group>"; };
-		CB15BB2B1F062D3700D95DC2 /* dec_if.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dec_if.h; sourceTree = "<group>"; };
-		CB15BB2C1F062D3700D95DC2 /* if_rom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = if_rom.h; sourceTree = "<group>"; };
-		CB15BB2D1F062D3700D95DC2 /* libopencore-amrwb.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libopencore-amrwb.a"; sourceTree = "<group>"; };
 		CB15BB341F06379800D95DC2 /* chat_voice_record@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "chat_voice_record@2x.png"; sourceTree = "<group>"; };
 		CB15BB351F06379800D95DC2 /* chat_ipunt_message@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "chat_ipunt_message@2x.png"; sourceTree = "<group>"; };
 		CB15BB381F0638D700D95DC2 /* Chat_take_picture@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Chat_take_picture@2x.png"; sourceTree = "<group>"; };
@@ -163,6 +145,10 @@
 		CB19714E1F14B03C00675006 /* MessageCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageCell.m; sourceTree = "<group>"; };
 		CB1971501F15F87C00675006 /* MessageImageAvatarBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageImageAvatarBrowser.h; sourceTree = "<group>"; };
 		CB1971511F15F87C00675006 /* MessageImageAvatarBrowser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageImageAvatarBrowser.m; sourceTree = "<group>"; };
+		CBCD1117205EBFF80092F9A6 /* libmp3lame.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libmp3lame.a; sourceTree = "<group>"; };
+		CBCD1118205EBFF80092F9A6 /* Mp3Recorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mp3Recorder.h; sourceTree = "<group>"; };
+		CBCD1119205EBFF80092F9A6 /* Mp3Recorder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Mp3Recorder.m; sourceTree = "<group>"; };
+		CBCD111A205EBFF80092F9A6 /* lame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lame.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -170,9 +156,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CB15BB331F062D3700D95DC2 /* libopencore-amrwb.a in Frameworks */,
-				CB15BB321F062D3700D95DC2 /* libopencore-amrnb.a in Frameworks */,
 				3575B82F821F115397C06763 /* Pods_MessageView.framework in Frameworks */,
+				CBCD111B205EBFF80092F9A6 /* libmp3lame.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -314,46 +299,12 @@
 		CB15BB1C1F062D3700D95DC2 /* VoiceFramework */ = {
 			isa = PBXGroup;
 			children = (
-				CB15BB1D1F062D3700D95DC2 /* amrwapper */,
-				CB15BB221F062D3700D95DC2 /* Mp3Recorder.h */,
-				CB15BB231F062D3700D95DC2 /* Mp3Recorder.m */,
-				CB15BB241F062D3700D95DC2 /* NSVoiceConverter.h */,
-				CB15BB251F062D3700D95DC2 /* NSVoiceConverter.mm */,
-				CB15BB261F062D3700D95DC2 /* opencore-amrnb */,
-				CB15BB2A1F062D3700D95DC2 /* opencore-amrwb */,
+				CBCD111A205EBFF80092F9A6 /* lame.h */,
+				CBCD1117205EBFF80092F9A6 /* libmp3lame.a */,
+				CBCD1118205EBFF80092F9A6 /* Mp3Recorder.h */,
+				CBCD1119205EBFF80092F9A6 /* Mp3Recorder.m */,
 			);
 			path = VoiceFramework;
-			sourceTree = "<group>";
-		};
-		CB15BB1D1F062D3700D95DC2 /* amrwapper */ = {
-			isa = PBXGroup;
-			children = (
-				CB15BB1E1F062D3700D95DC2 /* amrFileCodec.h */,
-				CB15BB1F1F062D3700D95DC2 /* amrFileCodec.mm */,
-				CB15BB201F062D3700D95DC2 /* wav.h */,
-				CB15BB211F062D3700D95DC2 /* wav.mm */,
-			);
-			path = amrwapper;
-			sourceTree = "<group>";
-		};
-		CB15BB261F062D3700D95DC2 /* opencore-amrnb */ = {
-			isa = PBXGroup;
-			children = (
-				CB15BB271F062D3700D95DC2 /* interf_dec.h */,
-				CB15BB281F062D3700D95DC2 /* interf_enc.h */,
-				CB15BB291F062D3700D95DC2 /* libopencore-amrnb.a */,
-			);
-			path = "opencore-amrnb";
-			sourceTree = "<group>";
-		};
-		CB15BB2A1F062D3700D95DC2 /* opencore-amrwb */ = {
-			isa = PBXGroup;
-			children = (
-				CB15BB2B1F062D3700D95DC2 /* dec_if.h */,
-				CB15BB2C1F062D3700D95DC2 /* if_rom.h */,
-				CB15BB2D1F062D3700D95DC2 /* libopencore-amrwb.a */,
-			);
-			path = "opencore-amrwb";
 			sourceTree = "<group>";
 		};
 		CB19713C1F13196C00675006 /* MessageCell */ = {
@@ -615,8 +566,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CBCD111C205EBFF80092F9A6 /* Mp3Recorder.m in Sources */,
 				CB15BB071F06264000D95DC2 /* UIVoiceKeyboardView.m in Sources */,
-				CB15BB311F062D3700D95DC2 /* NSVoiceConverter.mm in Sources */,
 				CB15BAD71F048EEB00D95DC2 /* MessageView.m in Sources */,
 				CB1971521F15F87C00675006 /* MessageImageAvatarBrowser.m in Sources */,
 				CB15BAAA1F048ED500D95DC2 /* ViewController.m in Sources */,
@@ -624,10 +575,7 @@
 				CB1971421F132B4900675006 /* NSDate+Utils.m in Sources */,
 				CB15BAA71F048ED500D95DC2 /* AppDelegate.m in Sources */,
 				CB15BAA41F048ED500D95DC2 /* main.m in Sources */,
-				CB15BB2E1F062D3700D95DC2 /* amrFileCodec.mm in Sources */,
-				CB15BB301F062D3700D95DC2 /* Mp3Recorder.m in Sources */,
 				CB15BB001F04E37E00D95DC2 /* FaceKeyboardView.m in Sources */,
-				CB15BB2F1F062D3700D95DC2 /* wav.mm in Sources */,
 				CB1971491F14731F00675006 /* MessageContentButton.m in Sources */,
 				CB19714F1F14B03C00675006 /* MessageCell.m in Sources */,
 				CB1971461F136EC200675006 /* MessageFrame.m in Sources */,
@@ -711,6 +659,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -760,6 +709,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -785,15 +735,17 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = QY9VQ39PE4;
 				INFOPLIST_FILE = MessageView/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/MessageView/VoiceFramework/opencore-amrnb",
 					"$(PROJECT_DIR)/MessageView/VoiceFramework/opencore-amrwb",
+					"$(PROJECT_DIR)/MessageView/VoiceFramework",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.zhc.MessageView;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -804,15 +756,17 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = QY9VQ39PE4;
 				INFOPLIST_FILE = MessageView/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/MessageView/VoiceFramework/opencore-amrnb",
 					"$(PROJECT_DIR)/MessageView/VoiceFramework/opencore-amrwb",
+					"$(PROJECT_DIR)/MessageView/VoiceFramework",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.zhc.MessageView;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

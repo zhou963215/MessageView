@@ -57,6 +57,7 @@
     _player.delegate = self;
     [_player play];
     [self.delegate MMAVAudioPlayerBeiginPlay];
+
 }
 
 -(void)setupPlaySound{
@@ -69,7 +70,11 @@
 {
     [self.delegate MMAVAudioPlayerDidFinishPlay];
 }
-
+- (void)audioPlayerDecodeErrorDidOccur:(AVAudioPlayer *)player error:(NSError *)error{
+    
+    
+    
+}
 - (void)stopSound
 {
     if (_player && _player.isPlaying) {

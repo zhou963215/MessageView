@@ -11,6 +11,7 @@
 #import "MessageCell.h"
 #import "MessageModel.h"
 #import "MessageFrame.h"
+#import <objc/runtime.h>
 #define Main_Screen_Height      [[UIScreen mainScreen] bounds].size.height
 
 @interface ViewController ()<MessageViewDelegate,MessageCellDelegate,UITableViewDelegate,UITableViewDataSource>
@@ -22,17 +23,24 @@
 @property (weak, nonatomic) IBOutlet UITableView * tableView;
 
 @property (nonatomic, strong) NSMutableArray * dataArray;
+@property (nonatomic, assign) BOOL currentIsInBottom;
 @end
 
 @implementation ViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    if (@available(iOS 11.0, *)) {
+        self.tableView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    } else {
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
     self.dataArray = [[NSMutableArray alloc]init];
+    [self.tableView registerClass:[MessageCell class] forCellReuseIdentifier:@"cell"];
 
     [self creatData];
-      messageView = [[MessageView alloc]initWithSuperVC:self];
-//    messageView.backgroundColor = [UIColor whiteColor];
+    messageView = [[MessageView alloc]initWithSuperVC:self];
     messageView.delegate = self;
     [self.view addSubview:messageView];
     
@@ -45,19 +53,32 @@
 //    NSLog(@"1--%d--2--%d--3--%d--4--%d",res1,res2,res3,res4);
     
     
-    
+//    UIImage *tempImg = [UIImage imageWithCGImage:image.CGImage scale:2 orientation:UIImageOrientationUp];
     
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(keyboardChange:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(keyboardChange:) name:UIKeyboardWillHideNotification object:nil];
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(tableViewScrollToBottom) name:UIKeyboardDidShowNotification object:nil];
+//    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(tableViewScrollToBottom) name:UIKeyboardDidShowNotification object:nil];
 
-    [self.tableView registerClass:[MessageCell class] forCellReuseIdentifier:@"cell"];
     [self tableViewScrollToBottom];
 
 }
 
 
-
+-(void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    CGFloat height = self.tableView.frame.size.height;
+    CGFloat contentOffsetY = self.tableView.contentOffset.y;
+    CGFloat bottomOffset = self.tableView.contentSize.height - contentOffsetY;
+    if (bottomOffset <= height)
+    {
+        //在最底部
+        self.currentIsInBottom = YES;
+    }
+    else
+    {
+        self.currentIsInBottom = NO;
+    }
+}
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     
     return [self.dataArray[indexPath.row] cellHeight];
@@ -98,22 +119,23 @@
     [UIView setAnimationDuration:animationDuration];
     [UIView setAnimationCurve:animationCurve];
     
+    
     //adjust ChatTableView's height
     if (notification.name == UIKeyboardWillShowNotification) {
-        self.bottomConstraint.constant = keyboardEndFrame.size.height+40;
+        self.bottomConstraint.constant = keyboardEndFrame.size.height+44;
         
 
     }else{
-        self.bottomConstraint.constant = 40;
+        self.bottomConstraint.constant = 44;
     }
     
-    [self.view layoutIfNeeded];
     
     //adjust UUInputFunctionView's originPoint
     CGRect newFrame = messageView.frame;
     newFrame.origin.y = keyboardEndFrame.origin.y - newFrame.size.height;
     messageView.frame = newFrame;
-    
+    [self.view layoutIfNeeded];
+    [self tableViewScrollToBottom];
     [UIView commitAnimations];
     
 }
@@ -121,12 +143,11 @@
 //tableView Scroll to bottom
 - (void)tableViewScrollToBottom
 {
-    if (self.dataArray.count==0)
+    if (self.dataArray.count==0 )
         return;
-    
+
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.dataArray.count-1 inSection:0];
-    [self.tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionBottom animated:YES];
-    
+    [self.tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionBottom animated:NO];
     
 }
 
@@ -142,7 +163,7 @@
                           @"type": @(MessageTypeText)};
     funcView.TextViewInput.text = @"";
     [self addObject:dic];
-
+    [self tableViewScrollToBottom];
 }
 
 //图片消息
@@ -152,6 +173,8 @@
     NSDictionary *dic = @{@"picture": image,
                           @"type": @(MessageTypePicture)};
     [self addObject:dic];
+    [self tableViewScrollToBottom];
+
 }
 //语音消息
 - (void)MessageView:(MessageView *)funcView sendVoice:(NSData *)voice time:(NSInteger)second
@@ -160,6 +183,8 @@
                           @"strVoiceTime": [NSString stringWithFormat:@"%d",(int)second],
                           @"type": @(MessageTypeVoice)};
     [self  addObject:dic];
+    [self tableViewScrollToBottom];
+
 
 }
 
@@ -167,17 +192,16 @@
 - (void)faceViewChange:(MessageView *)funcView{
     
     CGFloat h = Main_Screen_Height - funcView.frame.origin.y;
-    
-    [UIView animateWithDuration:0.1 animations:^{
-        self.bottomConstraint.constant = h;
+   
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:0.25];
+    [UIView setAnimationCurve:7];
+    self.bottomConstraint.constant = h;
+    [self.view layoutIfNeeded];
 
-        [self.view layoutIfNeeded];
-        [self tableViewScrollToBottom];
+    [self tableViewScrollToBottom];
 
-    }];
-    
-    
-    
+    [UIView commitAnimations];
 }
 static NSString * previousTime = nil;
 
@@ -206,7 +230,6 @@ static NSString * previousTime = nil;
 
 //    
     [self.tableView reloadData];
-    [self tableViewScrollToBottom];
     
 }
 //static int dateNum = 10;
@@ -226,7 +249,7 @@ static NSString * previousTime = nil;
         MessageModel * message = [[MessageModel alloc]init];
         NSMutableDictionary *dataDic = [NSMutableDictionary dictionaryWithDictionary:@{@"type":@(MessageTypeText),@"strContent" : [self getRandomString]}];
         
-        NSString *URLStr = @"http://cdn.duitang.com/uploads/item/201211/24/20121124074205_5LPfy.jpeg";
+        NSString *URLStr = @"https://cdn.duitang.com/uploads/item/201211/24/20121124074205_5LPfy.jpeg";
         [dataDic setObject:@(MessageFromOther) forKey:@"from"];
 //        NSDate *date = [[NSDate date]dateByAddingTimeInterval:arc4random()%1000*(dateNum++) ];
         [dataDic setObject:[date description] forKey:@"strTime"];
